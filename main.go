@@ -19,7 +19,7 @@ import (
 
 	xproxy "golang.org/x/net/proxy"
 
-	se "github.com/Snawoot/opera-proxy/seclient"
+	se "github.com/JosiahWhite/opera-proxy/seclient"
 )
 
 const (
@@ -285,7 +285,7 @@ func run() int {
 	mainLogger.Info("Starting proxy server...")
 	handler := NewProxyHandler(handlerDialer, proxyLogger)
 	mainLogger.Info("Init complete.")
-	err = http.ListenAndServe(args.bindAddress, handler)
+	err = handler.Start(args.bindAddress)
 	mainLogger.Critical("Server terminated with a reason: %v", err)
 	mainLogger.Info("Shutting down...")
 	return 0

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -187,4 +188,51 @@ func runTicker(ctx context.Context, interval, retryInterval time.Duration, cb fu
 			}
 		}
 	}()
+}
+
+func readSocks5Address(r io.Reader) (string, error) {
+	addrType := []byte{0}
+	if _, err := r.Read(addrType); err != nil {
+		return "", err
+	}
+
+	var destHost string
+
+	// Handle on a per type basis
+	switch addrType[0] {
+	case uint8(1):
+		addr := make([]byte, 4)
+		if _, err := io.ReadAtLeast(r, addr, len(addr)); err != nil {
+			return "", err
+		}
+		destHost = net.IP(addr).String()
+
+	case uint8(3):
+		if _, err := r.Read(addrType); err != nil {
+			return "", err
+		}
+		addrLen := int(addrType[0])
+		fqdn := make([]byte, addrLen)
+		if _, err := io.ReadAtLeast(r, fqdn, addrLen); err != nil {
+			return "", err
+		}
+		destHost = string(fqdn)
+	default:
+		return "", nil
+	}
+
+	// Read the port
+	port := []byte{0, 0}
+	if _, err := io.ReadAtLeast(r, port, 2); err != nil {
+		return "", err
+	}
+
+	portInt := (int(port[0]) << 8) | int(port[1])
+
+	if portInt != 80 && portInt != 443 {
+		return "", errors.New("unsupported port")
+	}
+
+	retAddr := fmt.Sprintf("%s:%d", destHost, portInt)
+	return retAddr, nil
 }

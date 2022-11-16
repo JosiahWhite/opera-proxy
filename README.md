@@ -19,7 +19,7 @@ By default the application listens on 127.0.0.1:18080.
 
 #### Binaries
 
-Pre-built binaries are available [here](https://github.com/Snawoot/opera-proxy/releases/latest).
+Pre-built binaries are available [here](https://github.com/JosiahWhite/opera-proxy/releases/latest).
 
 #### Build from source
 
@@ -106,4 +106,4 @@ eu3.sec-tunnel.com,77.111.244.22,443
 
 ## See also
 
-* [Project wiki](https://github.com/Snawoot/opera-proxy/wiki)
+* [Project wiki](https://github.com/JosiahWhite/opera-proxy/wiki)
